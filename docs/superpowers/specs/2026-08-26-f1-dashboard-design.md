@@ -144,8 +144,10 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
 - **Live data:** optou-se por não pagar OpenF1 Sponsor (€9,90/mês) nem implementar o
   feed não-oficial de live timing no MVP. Aba "Ao Vivo" fica desenhada porém travada.
 - **Stack:** sem preferência prévia do usuário — recomendação adotada foi Next.js +
-  TypeScript + Vercel, pela simplicidade de deploy e por eliminar o risco de CORS via
-  backend-for-frontend.
+  TypeScript + Vercel, pela simplicidade de deploy. A camada de rotas `/app/api/...`
+  originalmente desenhada para eliminar risco de CORS foi removida durante o planejamento
+  de implementação: Server Components buscam dados no servidor, então CORS (restrição de
+  navegador) nunca se aplicava a esse caminho — ver nota em §3 e o plano de implementação.
 - **Escopo de dados:** priorizar dados do campeonato atual e histórico via Jolpica;
   OpenF1 histórico como enriquecimento opcional, não crítico.
 - **Identidade visual:** dark theme com cores de construtor como acento contextual;
