@@ -54,9 +54,33 @@ backend (ver Arquitetura), eliminando esse risco.
 | `/calendario` | Temporada completa — rounds passados e futuros, datas/horários convertidos para o fuso do usuário. |
 | `/resultados/[round]` | Grid de largada, resultado da corrida, resultado do quali, fastest lap; quando disponível, seção extra do OpenF1 (lap times, pit stops, stints, clima) daquela sessão já encerrada. |
 | `/pilotos/[id]` | Perfil do piloto: equipe, pontos/posição na temporada, últimos resultados. |
-| `/ao-vivo` | **Travada nesta fase** — ver seção 5. |
+| `/ao-vivo` | **Travada nesta fase** — ver seção 6. |
 
-## 5. Aba "Ao Vivo" — desenhada, mas travada no MVP
+## 5. Identidade visual
+
+Tema **dark**, com estética inspirada em telemetria/broadcast de F1 (painéis, HUD de
+corrida), não um clone de nenhuma equipe específica.
+
+- **Base:** fundo escuro (quase-preto, não preto puro) com texto claro; acentos em
+  vermelho/cinza-metálico como cor de destaque neutra da marca do app (independente de
+  equipe), reservando cor viva pra dado, não pra chrome da UI.
+- **Cores de construtor:** cada equipe usa sua cor oficial da temporada corrente como
+  acento contextual — barra lateral de linha em tabelas de resultado/standings, badge do
+  nome da equipe no perfil do piloto, destaque no card do vencedor em `/resultados/[round]`.
+  As cores ficam num mapa `equipe → hex` mantido no código (não vem de nenhuma API), a ser
+  atualizado manualmente se alguma equipe rebrandar durante a temporada.
+- **Tipografia:** a fonte oficial da F1 ("Formula1 Display/Wide") é licenciada pela
+  Monotype e não está disponível pra uso livre/redistribuição — não vamos embutir a fonte
+  proprietária. Em vez disso, usar **Titillium Web** (Google Fonts, grátis) como fonte
+  principal: é a fonte que a própria F1 usa em várias peças oficiais e é a escolha comum
+  em dashboards/fan projects de F1 por ter a mesma sensação técnica/condensada. Números
+  (tempos de volta, posições, pontos) usam variante tabular/monoespaçada pra alinhar bem
+  em tabela.
+- Esse trabalho visual (paleta final, componentes, tabela de cores por construtor) é
+  conduzido durante a implementação da UI usando a skill **`frontend-design`**, com esta
+  seção como briefing de partida.
+
+## 6. Aba "Ao Vivo" — desenhada, mas travada no MVP
 
 Mesmo sem dado ao vivo real, a lógica de detecção de sessão ativa já é implementada
 agora (é barata: usa datas de início/fim de sessão que já vêm do calendário/Jolpica),
@@ -73,7 +97,7 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
   reais, via OpenF1 Sponsor (pago, €9,90/mês) ou feed não-oficial de live timing da F1 —
   decisão a ser tomada quando essa fase for priorizada.
 
-## 6. Tratamento de erros e estados vazios
+## 7. Tratamento de erros e estados vazios
 
 - **API upstream fora do ar:** serve o último cache válido com aviso discreto de "dados
   podem estar desatualizados".
@@ -84,7 +108,7 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
   da API): a seção extra em `/resultados/[round]` simplesmente não aparece — não bloqueia
   o resto da página.
 
-## 7. Mobile
+## 8. Mobile
 
 - Layout **mobile-first** com Tailwind. No celular, navegação vira barra inferior ou
   menu hambúguer; no desktop, menu de topo/lateral.
@@ -92,13 +116,13 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
   o MVP), inclui manifest de **PWA básico** (ícone + suporte a "adicionar à tela
   inicial") para uma sensação mais de app, sem esforço extra de infraestrutura.
 
-## 8. Deploy
+## 9. Deploy
 
 - Repositório no GitHub (público é aceitável — nenhum segredo no projeto).
 - Import direto na Vercel (conta grátis, login via GitHub); deploy automático a cada
   push na branch principal.
 
-## 9. Testes
+## 10. Testes
 
 - Sem suíte pesada no MVP (over-engineering para um dashboard pessoal nesta fase).
 - Um teste unitário simples por rota de API do backend, validando que o
@@ -107,7 +131,7 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
 - Validação do restante é manual: rodar local e checar em desktop e celular antes de
   cada deploy.
 
-## 10. Decisões registradas (para referência futura)
+## 11. Decisões registradas (para referência futura)
 
 - **Live data:** optou-se por não pagar OpenF1 Sponsor (€9,90/mês) nem implementar o
   feed não-oficial de live timing no MVP. Aba "Ao Vivo" fica desenhada porém travada.
@@ -116,3 +140,7 @@ para que a fase 2 só precise trocar o conteúdo interno, não a lógica de bloq
   backend-for-frontend.
 - **Escopo de dados:** priorizar dados do campeonato atual e histórico via Jolpica;
   OpenF1 histórico como enriquecimento opcional, não crítico.
+- **Identidade visual:** dark theme com cores de construtor como acento contextual;
+  fonte **Titillium Web** (grátis) no lugar da fonte oficial da F1, que é licenciada e
+  não pode ser embutida livremente. Implementação da UI conduzida com a skill
+  `frontend-design`.
