@@ -45,6 +45,14 @@ backend (ver Arquitetura), eliminando esse risco.
 - Nenhuma variável de ambiente obrigatória hoje; estrutura já deixa espaço para uma
   futura `OPENF1_API_KEY` na fase 2 (live pago).
 
+> **Nota de implementação (ver plano):** durante o planejamento, descobrimos que Server
+> Components do Next.js buscam dados no servidor (não no navegador do visitante), então o
+> risco de CORS que motivou a camada de rotas `/app/api/...` não se aplica a esse caminho.
+> O MVP chama `lib/jolpica.ts`/`lib/openf1.ts` diretamente das páginas (Server Components),
+> sem uma camada de API interna — o cache via `fetch`/`revalidate` continua exatamente como
+> descrito acima. Uma camada de rota só voltará a fazer sentido se uma fase futura precisar
+> de polling client-side (ex.: dado ao vivo real).
+
 ## 4. Páginas (IA de navegação)
 
 | Rota | Conteúdo |
