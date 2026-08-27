@@ -1,0 +1,12 @@
+{
+  "name": "F1 Dashboard",
+  "short_name": "F1 Dash",
+  "description": "Classificação, calendário e resultados de Fórmula 1",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#e10600",
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
