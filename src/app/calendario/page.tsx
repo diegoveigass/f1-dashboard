@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getSeasonSchedule } from "@/lib/jolpica";
 
 function formatDate(iso: string): string {
@@ -28,9 +29,9 @@ export default async function CalendarioPage() {
           const isPast = new Date(race.sessions.race).getTime() < nowMs;
           return (
             <li key={race.round} className={`rounded bg-surface p-4 ${isPast ? "opacity-60" : ""}`}>
-              <p className="font-semibold">
+              <Link href={`/resultados/${race.round}`} className="font-semibold hover:text-accent">
                 Round {race.round} — {race.raceName}
-              </p>
+              </Link>
               <p className="text-sm text-muted">
                 {race.locality}, {race.country}
               </p>

@@ -200,6 +200,7 @@ export interface RaceResult {
   season: string;
   round: number;
   raceName: string;
+  date: string;
   results: RaceResultEntry[];
 }
 
@@ -218,7 +219,7 @@ interface RawResultsResponse {
     RaceTable: {
       season: string;
       round: string;
-      Races: Array<{ raceName: string; Results: RawResult[] }>;
+      Races: Array<{ raceName: string; date: string; Results: RawResult[] }>;
     };
   };
 }
@@ -233,6 +234,7 @@ export async function getRaceResults(season: string, round: string | number): Pr
     season: data.MRData.RaceTable.season,
     round: Number(data.MRData.RaceTable.round),
     raceName: race.raceName,
+    date: race.date,
     results: race.Results.map((r) => ({
       position: Number(r.position),
       status: r.status,

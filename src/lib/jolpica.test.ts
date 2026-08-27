@@ -166,6 +166,7 @@ describe("getRaceResults", () => {
           Races: [
             {
               raceName: "Australian Grand Prix",
+              date: "2026-03-08",
               Results: [
                 {
                   position: "1",
@@ -189,6 +190,7 @@ describe("getRaceResults", () => {
       season: "2026",
       round: 1,
       raceName: "Australian Grand Prix",
+      date: "2026-03-08",
       results: [
         {
           position: 1,
