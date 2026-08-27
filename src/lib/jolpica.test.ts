@@ -153,3 +153,135 @@ describe("getSeasonSchedule", () => {
     ]);
   });
 });
+
+import { getRaceResults, getDriverInfo, getDriverSeasonResults } from "./jolpica";
+
+describe("getRaceResults", () => {
+  it("maps raw race results into RaceResult", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          season: "2026",
+          round: "1",
+          Races: [
+            {
+              raceName: "Australian Grand Prix",
+              Results: [
+                {
+                  position: "1",
+                  points: "25",
+                  status: "Finished",
+                  Driver: { driverId: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+                  Constructor: { constructorId: "mercedes", name: "Mercedes" },
+                  Time: { time: "1:23:06.801" },
+                  FastestLap: { rank: "6" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getRaceResults("2026", 1);
+
+    expect(result).toEqual({
+      season: "2026",
+      round: 1,
+      raceName: "Australian Grand Prix",
+      results: [
+        {
+          position: 1,
+          status: "Finished",
+          points: 25,
+          driver: { id: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+          constructorId: "mercedes",
+          constructorName: "Mercedes",
+          time: "1:23:06.801",
+          fastestLapRank: 6,
+        },
+      ],
+    });
+  });
+
+  it("throws when the round has no race data", async () => {
+    mockFetchOnce({ MRData: { RaceTable: { season: "2026", round: "99", Races: [] } } });
+    await expect(getRaceResults("2026", 99)).rejects.toThrow("No results found for 2026 round 99");
+  });
+});
+
+describe("getDriverInfo", () => {
+  it("maps raw driver info into DriverInfo", async () => {
+    mockFetchOnce({
+      MRData: {
+        DriverTable: {
+          Drivers: [
+            {
+              driverId: "norris",
+              permanentNumber: "4",
+              code: "NOR",
+              givenName: "Lando",
+              familyName: "Norris",
+              nationality: "British",
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getDriverInfo("norris");
+
+    expect(result).toEqual({
+      id: "norris",
+      code: "NOR",
+      number: 4,
+      givenName: "Lando",
+      familyName: "Norris",
+      nationality: "British",
+    });
+  });
+
+  it("throws when the driver id does not exist", async () => {
+    mockFetchOnce({ MRData: { DriverTable: { Drivers: [] } } });
+    await expect(getDriverInfo("nobody")).rejects.toThrow("Driver not found: nobody");
+  });
+});
+
+describe("getDriverSeasonResults", () => {
+  it("maps one result per round into DriverRaceSummary[]", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          Races: [
+            {
+              round: "1",
+              raceName: "Australian Grand Prix",
+              Results: [
+                {
+                  position: "5",
+                  points: "10",
+                  status: "Finished",
+                  Constructor: { constructorId: "mclaren", name: "McLaren" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getDriverSeasonResults("2026", "norris");
+
+    expect(result).toEqual([
+      {
+        round: 1,
+        raceName: "Australian Grand Prix",
+        position: 5,
+        points: 10,
+        status: "Finished",
+        constructorId: "mclaren",
+        constructorName: "McLaren",
+      },
+    ]);
+  });
+});

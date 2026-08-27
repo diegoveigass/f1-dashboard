@@ -184,3 +184,132 @@ export async function getSeasonSchedule(season: string = "current"): Promise<Rac
     },
   }));
 }
+
+export interface RaceResultEntry {
+  position: number;
+  status: string;
+  points: number;
+  driver: { id: string; code: string; givenName: string; familyName: string };
+  constructorId: string;
+  constructorName: string;
+  time: string | null;
+  fastestLapRank: number | null;
+}
+
+export interface RaceResult {
+  season: string;
+  round: number;
+  raceName: string;
+  results: RaceResultEntry[];
+}
+
+interface RawResult {
+  position: string;
+  points: string;
+  status: string;
+  Driver: JolpicaDriver;
+  Constructor: JolpicaConstructor;
+  Time?: { time: string };
+  FastestLap?: { rank: string };
+}
+
+interface RawResultsResponse {
+  MRData: {
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<{ raceName: string; Results: RawResult[] }>;
+    };
+  };
+}
+
+export async function getRaceResults(season: string, round: string | number): Promise<RaceResult> {
+  const data = await fetchJolpica<RawResultsResponse>(`/${season}/${round}/results.json`);
+  const race = data.MRData.RaceTable.Races[0];
+  if (!race) {
+    throw new Error(`No results found for ${season} round ${round}`);
+  }
+  return {
+    season: data.MRData.RaceTable.season,
+    round: Number(data.MRData.RaceTable.round),
+    raceName: race.raceName,
+    results: race.Results.map((r) => ({
+      position: Number(r.position),
+      status: r.status,
+      points: Number(r.points),
+      driver: {
+        id: r.Driver.driverId,
+        code: r.Driver.code,
+        givenName: r.Driver.givenName,
+        familyName: r.Driver.familyName,
+      },
+      constructorId: r.Constructor.constructorId,
+      constructorName: r.Constructor.name,
+      time: r.Time?.time ?? null,
+      fastestLapRank: r.FastestLap ? Number(r.FastestLap.rank) : null,
+    })),
+  };
+}
+
+export interface DriverInfo {
+  id: string;
+  code: string;
+  number: number | null;
+  givenName: string;
+  familyName: string;
+  nationality: string;
+}
+
+interface RawDriverInfoResponse {
+  MRData: { DriverTable: { Drivers: JolpicaDriver[] } };
+}
+
+export async function getDriverInfo(driverId: string): Promise<DriverInfo> {
+  const data = await fetchJolpica<RawDriverInfoResponse>(`/drivers/${driverId}.json`);
+  const driver = data.MRData.DriverTable.Drivers[0];
+  if (!driver) {
+    throw new Error(`Driver not found: ${driverId}`);
+  }
+  return {
+    id: driver.driverId,
+    code: driver.code,
+    number: driver.permanentNumber ? Number(driver.permanentNumber) : null,
+    givenName: driver.givenName,
+    familyName: driver.familyName,
+    nationality: driver.nationality,
+  };
+}
+
+export interface DriverRaceSummary {
+  round: number;
+  raceName: string;
+  position: number;
+  points: number;
+  status: string;
+  constructorId: string;
+  constructorName: string;
+}
+
+interface RawDriverResultsResponse {
+  MRData: {
+    RaceTable: {
+      Races: Array<{ round: string; raceName: string; Results: RawResult[] }>;
+    };
+  };
+}
+
+export async function getDriverSeasonResults(season: string, driverId: string): Promise<DriverRaceSummary[]> {
+  const data = await fetchJolpica<RawDriverResultsResponse>(`/${season}/drivers/${driverId}/results.json`);
+  return data.MRData.RaceTable.Races.map((race) => {
+    const result = race.Results[0];
+    return {
+      round: Number(race.round),
+      raceName: race.raceName,
+      position: Number(result.position),
+      points: Number(result.points),
+      status: result.status,
+      constructorId: result.Constructor.constructorId,
+      constructorName: result.Constructor.name,
+    };
+  });
+}
