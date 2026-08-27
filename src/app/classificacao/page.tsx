@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getDriverStandings, getConstructorStandings } from "@/lib/jolpica";
 import { getConstructorColor } from "@/lib/constructor-colors";
 
@@ -41,7 +42,9 @@ export default async function ClassificacaoPage() {
               >
                 <td className="px-3 py-2">{standing.position}</td>
                 <td className="px-3 py-2">
-                  {standing.driver.givenName} {standing.driver.familyName}
+                  <Link href={`/pilotos/${standing.driver.id}`} className="hover:text-accent">
+                    {standing.driver.givenName} {standing.driver.familyName}
+                  </Link>
                 </td>
                 <td className="px-3 py-2 text-muted">{standing.constructorName}</td>
                 <td className="px-3 py-2 text-right">{standing.wins}</td>
