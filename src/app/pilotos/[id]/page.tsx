@@ -26,46 +26,57 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
     return <p className="text-muted">Não foi possível carregar o perfil deste piloto agora.</p>;
   }
 
+  const accent = currentStanding ? getConstructorColor(currentStanding.constructorId) : "var(--color-accent)";
+
   return (
     <div className="flex flex-col gap-6">
-      <section>
-        <h1 className="text-2xl font-bold">
+      <section className="border-b-2 pb-5" style={{ borderColor: accent }}>
+        <p className="section-label mb-1">
+          {driver.code}
+          {driver.number ? ` · #${driver.number}` : ""}
+        </p>
+        <h1 className="text-3xl font-bold uppercase tracking-tight text-foreground">
           {driver.givenName} {driver.familyName}
         </h1>
-        <p className="text-muted">
-          {driver.code}
-          {driver.number ? ` · #${driver.number}` : ""} · {driver.nationality}
-        </p>
+        <p className="mt-1 text-muted">{driver.nationality}</p>
         {currentStanding && (
           <p
-            className="mt-2 inline-block rounded border-l-4 bg-surface px-3 py-1 text-sm"
-            style={{ borderColor: getConstructorColor(currentStanding.constructorId) }}
+            className="mt-3 inline-flex items-center gap-2 border-l-4 bg-surface px-3 py-1.5 text-sm"
+            style={{ borderColor: accent }}
           >
-            {currentStanding.constructorName} · P{currentStanding.position} · {currentStanding.points} pts
+            <span className="font-semibold">{currentStanding.constructorName}</span>
+            <span className="text-muted">·</span>
+            <span className="tabular-nums">P{currentStanding.position}</span>
+            <span className="text-muted">·</span>
+            <span className="tabular-nums font-semibold">{currentStanding.points} pts</span>
           </p>
         )}
       </section>
 
       <section>
-        <h2 className="mb-2 text-lg font-semibold">Resultados na temporada</h2>
-        <table className="w-full border-collapse overflow-hidden rounded text-sm">
+        <h2 className="section-label mb-3">Resultados na temporada</h2>
+        <table className="w-full border-collapse text-sm">
           <thead>
-            <tr className="bg-surface text-left text-muted">
-              <th className="px-3 py-2">Round</th>
-              <th className="px-3 py-2">Corrida</th>
-              <th className="px-3 py-2">Equipe</th>
-              <th className="px-3 py-2">Pos.</th>
-              <th className="px-3 py-2 text-right">Pontos</th>
+            <tr className="border-b border-line text-left">
+              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Round</th>
+              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Corrida</th>
+              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Equipe</th>
+              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Pos.</th>
+              <th className="px-3 py-2 text-right text-xs font-bold uppercase tracking-wider text-muted">Pontos</th>
             </tr>
           </thead>
           <tbody>
             {seasonResults.map((race) => (
-              <tr key={race.round} className="border-l-4" style={{ borderColor: getConstructorColor(race.constructorId) }}>
-                <td className="px-3 py-2">{race.round}</td>
-                <td className="px-3 py-2">{race.raceName}</td>
-                <td className="px-3 py-2 text-muted">{race.constructorName}</td>
-                <td className="px-3 py-2">{race.position}</td>
-                <td className="px-3 py-2 text-right font-semibold">{race.points}</td>
+              <tr
+                key={race.round}
+                className="border-l-4 bg-surface transition-colors hover:bg-surface-raised"
+                style={{ borderColor: getConstructorColor(race.constructorId) }}
+              >
+                <td className="px-3 py-2.5 tabular-nums text-muted">{race.round}</td>
+                <td className="px-3 py-2.5">{race.raceName}</td>
+                <td className="px-3 py-2.5 text-muted">{race.constructorName}</td>
+                <td className="px-3 py-2.5 tabular-nums">{race.position}</td>
+                <td className="px-3 py-2.5 text-right tabular-nums font-semibold">{race.points}</td>
               </tr>
             ))}
           </tbody>

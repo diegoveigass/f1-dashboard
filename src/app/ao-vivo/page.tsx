@@ -12,7 +12,9 @@ export default async function AoVivoPage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-2xl font-bold">Ao Vivo</h1>
+      <h1 className="border-b-2 border-accent pb-4 text-3xl font-bold uppercase tracking-tight text-foreground">
+        Ao Vivo
+      </h1>
       {loadError ? (
         <p className="text-muted">Não foi possível carregar a agenda de sessões agora.</p>
       ) : (

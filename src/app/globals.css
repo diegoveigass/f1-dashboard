@@ -2,14 +2,52 @@
 
 @theme {
   --font-sans: var(--font-titillium), system-ui, sans-serif;
-  --color-background: #0a0a0a;
-  --color-foreground: #f2f2f2;
-  --color-surface: #17181c;
+
+  /* Cool graphite, not flat black — closer to a broadcast monitor than a
+     default "dark mode". Accent red is F1's own brand red, not a pick. */
+  --color-background: #0b0d10;
+  --color-surface: #15181d;
+  --color-surface-raised: #1b1f26;
+  --color-line: #262b33;
+  --color-foreground: #f2f3f5;
+  --color-muted: #8b93a1;
   --color-accent: #e10600;
-  --color-muted: #9ca3af;
+
+  /* Broadcast-timing convention: purple marks the outright fastest lap. */
+  --color-fastest: #b026ff;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-foreground);
+}
+
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-foreground);
+}
+
+/* Uppercase, letter-spaced eyebrow used for every section/table heading —
+   the same label style broadcast lower-thirds use for "DRIVER STANDINGS".
+   Defined in the `components` layer so a plain Tailwind utility (e.g.
+   `text-accent` or `text-[0.65rem]`) placed alongside it in a className
+   still wins, the same way it would over any other Tailwind component class. */
+@layer components {
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

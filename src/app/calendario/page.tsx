@@ -22,59 +22,68 @@ export default async function CalendarioPage() {
   const nowMs = Date.now();
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Calendário</h1>
+    <div className="flex flex-col gap-6">
+      <h1 className="border-b-2 border-accent pb-4 text-3xl font-bold uppercase tracking-tight text-foreground">
+        Calendário
+      </h1>
       <ol className="flex flex-col gap-3">
         {schedule.map((race) => {
           const isPast = new Date(race.sessions.race).getTime() < nowMs;
           return (
-            <li key={race.round} className={`rounded bg-surface p-4 ${isPast ? "opacity-60" : ""}`}>
-              <Link href={`/resultados/${race.round}`} className="font-semibold hover:text-accent">
-                Round {race.round} — {race.raceName}
+            <li
+              key={race.round}
+              className={`border-l-4 border-line bg-surface p-4 transition-colors hover:bg-surface-raised ${isPast ? "opacity-50" : ""}`}
+            >
+              <p className="section-label mb-1">Round {String(race.round).padStart(2, "0")}</p>
+              <Link
+                href={`/resultados/${race.round}`}
+                className="text-lg font-bold hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+              >
+                {race.raceName}
               </Link>
               <p className="text-sm text-muted">
                 {race.locality}, {race.country}
               </p>
-              <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-3">
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
                 {race.sessions.fp1 && (
                   <div>
-                    <dt className="text-muted">TL1</dt>
-                    <dd>{formatDate(race.sessions.fp1)}</dd>
+                    <dt className="section-label text-[0.65rem]">TL1</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.fp1)}</dd>
                   </div>
                 )}
                 {race.sessions.fp2 && (
                   <div>
-                    <dt className="text-muted">TL2</dt>
-                    <dd>{formatDate(race.sessions.fp2)}</dd>
+                    <dt className="section-label text-[0.65rem]">TL2</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.fp2)}</dd>
                   </div>
                 )}
                 {race.sessions.fp3 && (
                   <div>
-                    <dt className="text-muted">TL3</dt>
-                    <dd>{formatDate(race.sessions.fp3)}</dd>
+                    <dt className="section-label text-[0.65rem]">TL3</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.fp3)}</dd>
                   </div>
                 )}
                 {race.sessions.sprintQualifying && (
                   <div>
-                    <dt className="text-muted">Class. Sprint</dt>
-                    <dd>{formatDate(race.sessions.sprintQualifying)}</dd>
+                    <dt className="section-label text-[0.65rem]">Class. Sprint</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.sprintQualifying)}</dd>
                   </div>
                 )}
                 {race.sessions.sprint && (
                   <div>
-                    <dt className="text-muted">Sprint</dt>
-                    <dd>{formatDate(race.sessions.sprint)}</dd>
+                    <dt className="section-label text-[0.65rem]">Sprint</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.sprint)}</dd>
                   </div>
                 )}
                 {race.sessions.qualifying && (
                   <div>
-                    <dt className="text-muted">Classificação</dt>
-                    <dd>{formatDate(race.sessions.qualifying)}</dd>
+                    <dt className="section-label text-[0.65rem]">Classificação</dt>
+                    <dd className="tabular-nums">{formatDate(race.sessions.qualifying)}</dd>
                   </div>
                 )}
                 <div>
-                  <dt className="text-muted">Corrida</dt>
-                  <dd className="font-semibold">{formatDate(race.sessions.race)}</dd>
+                  <dt className="section-label text-[0.65rem] text-accent">Corrida</dt>
+                  <dd className="tabular-nums font-semibold">{formatDate(race.sessions.race)}</dd>
                 </div>
               </dl>
             </li>

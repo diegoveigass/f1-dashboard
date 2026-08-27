@@ -40,9 +40,12 @@ export function LiveStatusBanner({ sessions }: { sessions: SessionInfo[] }) {
 
   if (status.active) {
     return (
-      <div className="rounded border border-accent bg-surface p-4">
-        <p className="font-semibold text-accent">{sessionLabel(status.session)} em andamento agora</p>
-        <p className="mt-1 text-sm text-muted">
+      <div className="border-l-4 border-accent bg-surface p-5">
+        <p className="flex items-center gap-2 font-bold uppercase tracking-wide text-accent">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-accent" aria-hidden="true" />
+          {sessionLabel(status.session)} em andamento agora
+        </p>
+        <p className="mt-2 text-sm text-muted">
           Ao vivo indisponível nesta versão — dados chegam ~30min após o fim da sessão.
         </p>
       </div>
@@ -50,12 +53,19 @@ export function LiveStatusBanner({ sessions }: { sessions: SessionInfo[] }) {
   }
 
   return (
-    <div className="rounded border border-surface bg-surface p-4">
-      <p className="font-semibold">Sem sessão ao vivo no momento</p>
-      <p className="mt-1 text-sm text-muted">
-        {status.nextSession
-          ? `Próxima: ${sessionLabel(status.nextSession)} em ${formatCountdown(status.nextSession.dateStart, now)}`
-          : "Nenhuma sessão futura agendada."}
+    <div className="border-l-4 border-line bg-surface p-5">
+      <p className="section-label">Sem sessão ao vivo no momento</p>
+      <p className="mt-2 text-sm text-muted">
+        {status.nextSession ? (
+          <>
+            Próxima: <span className="font-semibold text-foreground">{sessionLabel(status.nextSession)}</span> em{" "}
+            <span className="tabular-nums font-semibold text-foreground">
+              {formatCountdown(status.nextSession.dateStart, now)}
+            </span>
+          </>
+        ) : (
+          "Nenhuma sessão futura agendada."
+        )}
       </p>
     </div>
   );
