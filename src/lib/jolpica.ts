@@ -113,3 +113,74 @@ export async function getConstructorStandings(season: string = "current"): Promi
     nationality: entry.Constructor.nationality,
   }));
 }
+
+export interface RaceScheduleEntry {
+  season: string;
+  round: number;
+  raceName: string;
+  circuitName: string;
+  locality: string;
+  country: string;
+  sessions: {
+    fp1?: string;
+    fp2?: string;
+    fp3?: string;
+    sprintQualifying?: string;
+    sprint?: string;
+    qualifying?: string;
+    race: string;
+  };
+}
+
+interface RawSessionTime {
+  date: string;
+  time: string;
+}
+
+interface RawRace {
+  season: string;
+  round: string;
+  raceName: string;
+  Circuit: {
+    circuitName: string;
+    Location: { locality: string; country: string };
+  };
+  date: string;
+  time?: string;
+  FirstPractice?: RawSessionTime;
+  SecondPractice?: RawSessionTime;
+  ThirdPractice?: RawSessionTime;
+  Qualifying?: RawSessionTime;
+  Sprint?: RawSessionTime;
+  SprintQualifying?: RawSessionTime;
+}
+
+interface RawScheduleResponse {
+  MRData: { RaceTable: { Races: RawRace[] } };
+}
+
+function toIso(session?: RawSessionTime): string | undefined {
+  if (!session) return undefined;
+  return `${session.date}T${session.time}`;
+}
+
+export async function getSeasonSchedule(season: string = "current"): Promise<RaceScheduleEntry[]> {
+  const data = await fetchJolpica<RawScheduleResponse>(`/${season}.json`);
+  return data.MRData.RaceTable.Races.map((race) => ({
+    season: race.season,
+    round: Number(race.round),
+    raceName: race.raceName,
+    circuitName: race.Circuit.circuitName,
+    locality: race.Circuit.Location.locality,
+    country: race.Circuit.Location.country,
+    sessions: {
+      fp1: toIso(race.FirstPractice),
+      fp2: toIso(race.SecondPractice),
+      fp3: toIso(race.ThirdPractice),
+      sprintQualifying: toIso(race.SprintQualifying),
+      sprint: toIso(race.Sprint),
+      qualifying: toIso(race.Qualifying),
+      race: race.time ? `${race.date}T${race.time}` : `${race.date}T00:00:00Z`,
+    },
+  }));
+}
