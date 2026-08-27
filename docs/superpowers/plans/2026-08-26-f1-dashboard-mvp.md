@@ -52,7 +52,7 @@ not before. The spec's §3/§11 will be updated to reflect this as part of Task 
 
 This is a scaffolding task — there is no failing test to write first.
 
-- [ ] **Step 1: Scaffold the app**
+- [x] **Step 1: Scaffold the app**
 
 Run from the repo root (the existing `.git` and `docs/` must survive — answer "no" if asked to overwrite):
 
@@ -60,13 +60,13 @@ Run from the repo root (the existing `.git` and `docs/` must survive — answer 
 npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias "@/*" --no-turbopack
 ```
 
-- [ ] **Step 2: Install Vitest**
+- [x] **Step 2: Install Vitest**
 
 ```bash
 npm install -D vitest @vitest/coverage-v8
 ```
 
-- [ ] **Step 3: Add Vitest config**
+- [x] **Step 3: Add Vitest config**
 
 Create `vitest.config.ts`:
 
@@ -87,7 +87,7 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 4: Add the test script**
+- [x] **Step 4: Add the test script**
 
 In `package.json`, inside `"scripts"`, add:
 
@@ -95,7 +95,7 @@ In `package.json`, inside `"scripts"`, add:
 "test": "vitest run"
 ```
 
-- [ ] **Step 5: Verify the toolchain**
+- [x] **Step 5: Verify the toolchain**
 
 ```bash
 npm run build
@@ -109,7 +109,7 @@ npm test
 
 Expected: `No test files found` (not an error — there are no `*.test.ts` files yet). This confirms Vitest is wired correctly before Task 3 adds real tests.
 
-- [ ] **Step 6: Record the architecture correction in the spec**
+- [x] **Step 6: Record the architecture correction in the spec**
 
 In `docs/superpowers/specs/2026-08-26-f1-dashboard-design.md`, replace the bullet list under `## 3. Arquitetura` that starts with `- **Sem banco de dados.**` by inserting this note immediately after that section's existing content (do not delete the existing bullets — append):
 
@@ -123,7 +123,7 @@ In `docs/superpowers/specs/2026-08-26-f1-dashboard-design.md`, replace the bulle
 > de polling client-side (ex.: dado ao vivo real).
 ```
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -145,7 +145,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test for this task (pure styling/config) — verified via build.
 
-- [ ] **Step 1: Replace `src/app/globals.css`**
+- [x] **Step 1: Replace `src/app/globals.css`**
 
 ```css
 @import "tailwindcss";
@@ -165,7 +165,7 @@ body {
 }
 ```
 
-- [ ] **Step 2: Replace `src/app/layout.tsx`**
+- [x] **Step 2: Replace `src/app/layout.tsx`**
 
 ```tsx
 import type { Metadata } from "next";
@@ -199,7 +199,7 @@ export default function RootLayout({
 }
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 npm run build
@@ -207,7 +207,7 @@ npm run build
 
 Expected: build succeeds with no CSS/theme errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -227,7 +227,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: `getConstructorColor(constructorId: string): string` — used by every page that renders a constructor/driver row (Tasks 11, 12, 14, 15).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `src/lib/constructor-colors.test.ts`:
 
@@ -247,7 +247,7 @@ describe("getConstructorColor", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- constructor-colors
@@ -255,7 +255,7 @@ npm test -- constructor-colors
 
 Expected: FAIL — `Cannot find module './constructor-colors'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `src/lib/constructor-colors.ts`. Constructor ids verified live against `https://api.jolpi.ca/ergast/f1/2026/constructors.json` (11 teams on the 2026 grid, including Audi and Cadillac as new entrants):
 
@@ -281,7 +281,7 @@ export function getConstructorColor(constructorId: string): string {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- constructor-colors
@@ -289,7 +289,7 @@ npm test -- constructor-colors
 
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/constructor-colors.ts src/lib/constructor-colors.test.ts
@@ -310,7 +310,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Produces: `DriverStanding`, `ConstructorStanding` types; `getDriverStandings(season?: string): Promise<DriverStanding[]>`; `getConstructorStandings(season?: string): Promise<ConstructorStanding[]>`. Used by Tasks 11, 12, 15.
 - Consumes: global `fetch` (mocked in tests via `vi.stubGlobal`).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `src/lib/jolpica.test.ts`:
 
@@ -421,7 +421,7 @@ describe("getConstructorStandings", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- jolpica
@@ -429,7 +429,7 @@ npm test -- jolpica
 
 Expected: FAIL — `Cannot find module './jolpica'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `src/lib/jolpica.ts`:
 
@@ -551,7 +551,7 @@ export async function getConstructorStandings(season: string = "current"): Promi
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- jolpica
@@ -559,7 +559,7 @@ npm test -- jolpica
 
 Expected: PASS (3 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/jolpica.ts src/lib/jolpica.test.ts
@@ -579,7 +579,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: `RaceScheduleEntry` type; `getSeasonSchedule(season?: string): Promise<RaceScheduleEntry[]>`. Used by Tasks 11, 13, 16.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `src/lib/jolpica.test.ts`:
 
@@ -637,7 +637,7 @@ describe("getSeasonSchedule", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- jolpica
@@ -645,7 +645,7 @@ npm test -- jolpica
 
 Expected: FAIL — `getSeasonSchedule is not a function`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Append to `src/lib/jolpica.ts`:
 
@@ -722,7 +722,7 @@ export async function getSeasonSchedule(season: string = "current"): Promise<Rac
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- jolpica
@@ -730,7 +730,7 @@ npm test -- jolpica
 
 Expected: PASS (4 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/jolpica.ts src/lib/jolpica.test.ts
@@ -750,7 +750,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: `RaceResult`, `RaceResultEntry`, `DriverInfo`, `DriverRaceSummary` types; `getRaceResults(season: string, round: string | number): Promise<RaceResult>`; `getDriverInfo(driverId: string): Promise<DriverInfo>`; `getDriverSeasonResults(season: string, driverId: string): Promise<DriverRaceSummary[]>`. Used by Tasks 14, 15.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `src/lib/jolpica.test.ts`:
 
@@ -888,7 +888,7 @@ describe("getDriverSeasonResults", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- jolpica
@@ -896,7 +896,7 @@ npm test -- jolpica
 
 Expected: FAIL — `getRaceResults is not a function` (and similarly for the other two).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Append to `src/lib/jolpica.ts`:
 
@@ -1031,7 +1031,7 @@ export async function getDriverSeasonResults(season: string, driverId: string): 
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- jolpica
@@ -1039,7 +1039,7 @@ npm test -- jolpica
 
 Expected: PASS (9 tests total in this file).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/jolpica.ts src/lib/jolpica.test.ts
@@ -1060,7 +1060,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Produces: `SessionInfo` type; `getUpcomingSessions(): Promise<SessionInfo[]>`. Used by Tasks 9, 16.
 - Consumes: global `fetch` (mocked in tests).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `src/lib/openf1.test.ts`:
 
@@ -1141,7 +1141,7 @@ describe("getUpcomingSessions", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- openf1
@@ -1149,7 +1149,7 @@ npm test -- openf1
 
 Expected: FAIL — `Cannot find module './openf1'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `src/lib/openf1.ts`:
 
@@ -1213,7 +1213,7 @@ export async function getUpcomingSessions(): Promise<SessionInfo[]> {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- openf1
@@ -1221,7 +1221,7 @@ npm test -- openf1
 
 Expected: PASS (2 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/openf1.ts src/lib/openf1.test.ts
@@ -1242,7 +1242,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Produces: `SessionExtras` type; `getSessionExtras(sessionKey: number): Promise<SessionExtras | null>`; `findRaceSessionKey(season: string, raceDateIso: string): Promise<number | null>`. Used by Task 14.
 - Both functions catch all errors internally and resolve to `null` — they must never throw, per the Global Constraints graceful-degradation rule.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Append to `src/lib/openf1.test.ts`:
 
@@ -1321,7 +1321,7 @@ describe("findRaceSessionKey", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- openf1
@@ -1329,7 +1329,7 @@ npm test -- openf1
 
 Expected: FAIL — `getSessionExtras is not a function`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Append to `src/lib/openf1.ts`:
 
@@ -1407,7 +1407,7 @@ export async function findRaceSessionKey(season: string, raceDateIso: string): P
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- openf1
@@ -1415,7 +1415,7 @@ npm test -- openf1
 
 Expected: PASS (6 tests total in this file).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/openf1.ts src/lib/openf1.test.ts
@@ -1436,7 +1436,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 - Consumes: `SessionInfo` from `src/lib/openf1.ts` (Task 7).
 - Produces: `LiveStatus` type; `getLiveStatus(sessions: SessionInfo[], now: Date): LiveStatus`. Used by Task 16.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `src/lib/session-status.test.ts`:
 
@@ -1484,7 +1484,7 @@ describe("getLiveStatus", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 ```bash
 npm test -- session-status
@@ -1492,7 +1492,7 @@ npm test -- session-status
 
 Expected: FAIL — `Cannot find module './session-status'`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Create `src/lib/session-status.ts`:
 
@@ -1522,7 +1522,7 @@ export function getLiveStatus(sessions: SessionInfo[], now: Date): LiveStatus {
 }
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 ```bash
 npm test -- session-status
@@ -1530,7 +1530,7 @@ npm test -- session-status
 
 Expected: PASS (3 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/lib/session-status.ts src/lib/session-status.test.ts
@@ -1552,7 +1552,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test (presentational component, out of test scope per Global Constraints) — verified manually.
 
-- [ ] **Step 1: Create the component**
+- [x] **Step 1: Create the component**
 
 Create `src/components/Navigation.tsx`:
 
@@ -1586,7 +1586,7 @@ export function Navigation() {
 }
 ```
 
-- [ ] **Step 2: Wire it into the root layout**
+- [x] **Step 2: Wire it into the root layout**
 
 In `src/app/layout.tsx`, add the import and render `<Navigation />` before `<main>`, and give `<main>` bottom padding so content isn't hidden behind the fixed mobile nav:
 
@@ -1603,7 +1603,7 @@ Replace the `<body>` block with:
       </body>
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 npm run dev
@@ -1611,7 +1611,7 @@ npm run dev
 
 Open `http://localhost:3000` and confirm the nav renders at the bottom on a narrow viewport and at the top on a wide one. Stop the dev server when done.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -1632,7 +1632,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test (page-level, out of test scope) — verified manually.
 
-- [ ] **Step 1: Replace `src/app/page.tsx`**
+- [x] **Step 1: Replace `src/app/page.tsx`**
 
 ```tsx
 import { getDriverStandings, getConstructorStandings, getSeasonSchedule, type RaceScheduleEntry } from "@/lib/jolpica";
@@ -1720,7 +1720,7 @@ export default async function DashboardPage() {
 }
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 npm run dev
@@ -1728,7 +1728,7 @@ npm run dev
 
 Open `http://localhost:3000` and confirm the dashboard renders real standings and a next-race line. Stop the dev server when done.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/app/page.tsx
@@ -1749,7 +1749,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test — verified manually.
 
-- [ ] **Step 1: Create the page**
+- [x] **Step 1: Create the page**
 
 ```tsx
 import { getDriverStandings, getConstructorStandings } from "@/lib/jolpica";
@@ -1838,7 +1838,7 @@ export default async function ClassificacaoPage() {
 }
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 npm run dev
@@ -1846,7 +1846,7 @@ npm run dev
 
 Open `http://localhost:3000/classificacao` and confirm both tables render with colored left borders per team. Stop the dev server when done.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/app/classificacao/page.tsx
@@ -1867,7 +1867,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test — verified manually.
 
-- [ ] **Step 1: Create the page**
+- [x] **Step 1: Create the page**
 
 ```tsx
 import { getSeasonSchedule } from "@/lib/jolpica";
@@ -1957,7 +1957,7 @@ export default async function CalendarioPage() {
 }
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 ```bash
 npm run dev
@@ -1965,7 +1965,7 @@ npm run dev
 
 Open `http://localhost:3000/calendario` and confirm every round renders, with past rounds dimmed. Stop the dev server when done.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/app/calendario/page.tsx
@@ -1990,7 +1990,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 No unit test for the page itself — verified manually. The `jolpica.ts` change below does
 get a test update, since it touches already-tested logic.
 
-- [ ] **Step 1: Add `date` to `RaceResult` (needed to look up the matching OpenF1 session)**
+- [x] **Step 1: Add `date` to `RaceResult` (needed to look up the matching OpenF1 session)**
 
 In `src/lib/jolpica.test.ts`, update the `getRaceResults` mock and expectation to include
 `date`. Replace the `Races: [ { raceName: "Australian Grand Prix", Results: [...] } ]`
@@ -2050,7 +2050,7 @@ interface RawResultsResponse {
     results: race.Results.map((r) => ({
 ```
 
-- [ ] **Step 2: Run tests to confirm the change is correct**
+- [x] **Step 2: Run tests to confirm the change is correct**
 
 ```bash
 npm test -- jolpica
@@ -2058,7 +2058,7 @@ npm test -- jolpica
 
 Expected: PASS (still 9 tests — the two `getRaceResults` tests now assert `date` too).
 
-- [ ] **Step 3: Create the results page**
+- [x] **Step 3: Create the results page**
 
 ```tsx
 import { getRaceResults } from "@/lib/jolpica";
@@ -2147,7 +2147,7 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
 }
 ```
 
-- [ ] **Step 4: Add links from the calendar page**
+- [x] **Step 4: Add links from the calendar page**
 
 In `src/app/calendario/page.tsx`, add the `Link` import and wrap each race's heading so
 every round links to its results page:
@@ -2172,7 +2172,7 @@ with:
               </Link>
 ```
 
-- [ ] **Step 5: Verify**
+- [x] **Step 5: Verify**
 
 ```bash
 npm run build
@@ -2188,7 +2188,7 @@ Open `http://localhost:3000/calendario`, click into a past round, and confirm th
 table renders; confirm weather/pit sections either render real data or are silently
 absent (never an error) depending on OpenF1 availability for that round.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add -A
@@ -2210,7 +2210,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 No unit test — verified manually.
 
-- [ ] **Step 1: Create the page**
+- [x] **Step 1: Create the page**
 
 ```tsx
 import { getDriverInfo, getDriverStandings, getDriverSeasonResults } from "@/lib/jolpica";
@@ -2291,7 +2291,7 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
 }
 ```
 
-- [ ] **Step 2: Link driver names from the classificação page**
+- [x] **Step 2: Link driver names from the classificação page**
 
 In `src/app/classificacao/page.tsx`, add the import:
 
@@ -2317,7 +2317,7 @@ with:
                 </td>
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 npm run build && npm run dev
@@ -2327,7 +2327,7 @@ Open `http://localhost:3000/classificacao`, click a driver, and confirm their pr
 page renders info, current standing, and a season results table. Stop the dev server
 when done.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -2350,7 +2350,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 No unit test for the component (client-side ticking UI, presentational) — the logic it
 depends on (`getLiveStatus`) is already covered by Task 9's tests. Verified manually here.
 
-- [ ] **Step 1: Create the client component**
+- [x] **Step 1: Create the client component**
 
 ```tsx
 "use client";
@@ -2417,7 +2417,7 @@ export function LiveStatusBanner({ sessions }: { sessions: SessionInfo[] }) {
 }
 ```
 
-- [ ] **Step 2: Create the page**
+- [x] **Step 2: Create the page**
 
 ```tsx
 import { getUpcomingSessions } from "@/lib/openf1";
@@ -2445,7 +2445,7 @@ export default async function AoVivoPage() {
 }
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 npm run dev
@@ -2455,7 +2455,7 @@ Open `http://localhost:3000/ao-vivo`. Confirm it shows either "em andamento agor
 session happens to be live) or the next scheduled session with a countdown, and that the
 countdown updates every 30 seconds without a page reload. Stop the dev server when done.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -2474,7 +2474,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Interfaces:** none — static assets referenced by `metadata.manifest` in `src/app/layout.tsx` (already set in Task 2).
 
-- [ ] **Step 1: Create a simple monogram icon**
+- [x] **Step 1: Create a simple monogram icon**
 
 Create `public/icons/icon.svg`:
 
@@ -2486,7 +2486,7 @@ Create `public/icons/icon.svg`:
 </svg>
 ```
 
-- [ ] **Step 2: Create the manifest**
+- [x] **Step 2: Create the manifest**
 
 Create `public/manifest.webmanifest`:
 
@@ -2505,7 +2505,7 @@ Create `public/manifest.webmanifest`:
 }
 ```
 
-- [ ] **Step 3: Verify**
+- [x] **Step 3: Verify**
 
 ```bash
 npm run build
@@ -2514,7 +2514,7 @@ npm run build
 Expected: build succeeds. Then run `npm run dev`, open devtools → Application →
 Manifest, and confirm it loads without errors.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add public/manifest.webmanifest public/icons/icon.svg
@@ -2535,7 +2535,7 @@ function signatures from earlier tasks.
 This task has no TDD steps — it is a visual refinement pass using an existing design
 skill instead of code-first iteration.
 
-- [ ] **Step 1: Invoke the `frontend-design` skill**
+- [x] **Step 1: Invoke the `frontend-design` skill**
 
 Run it against this brief: "Refine the F1 Dashboard MVP's visual design. Dark theme
 inspired by F1 broadcast/telemetry graphics (not a clone of any single team). Constructor
@@ -2549,7 +2549,7 @@ written. Apply the result across `src/app/globals.css`, `src/app/layout.tsx`,
 `src/components/Navigation.tsx`, `src/components/LiveStatusBanner.tsx`, and every page
 under `src/app/`."
 
-- [ ] **Step 2: Verify nothing broke**
+- [x] **Step 2: Verify nothing broke**
 
 ```bash
 npm test
@@ -2558,7 +2558,7 @@ npm run build
 
 Expected: all Vitest suites still pass (they don't touch styling) and the build succeeds.
 
-- [ ] **Step 3: Manual check on mobile and desktop widths**
+- [x] **Step 3: Manual check on mobile and desktop widths**
 
 ```bash
 npm run dev
@@ -2568,7 +2568,7 @@ Resize the browser (or use devtools device emulation) to confirm the dark theme,
 constructor colors, and Titillium Web read well at both a phone width (~375px) and a
 desktop width. Stop the dev server when done.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add -A
@@ -2586,7 +2586,7 @@ Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>"
 
 **Interfaces:** none.
 
-- [ ] **Step 1: Write the README**
+- [x] **Step 1: Write the README**
 
 Create `README.md`:
 
@@ -2625,7 +2625,7 @@ npm test
 - [OpenF1](https://openf1.org/) — enriquecimento opcional (clima, pit stops) e agenda de sessões para a aba Ao Vivo.
 ```
 
-- [ ] **Step 2: Merge onto the main branch**
+- [x] **Step 2: Merge onto the main branch**
 
 ```bash
 git branch -m docs/f1-dashboard-design main
@@ -2634,7 +2634,7 @@ git log --oneline
 
 Expected: a linear history of every commit made across Tasks 1–19, ending on `main`.
 
-- [ ] **Step 3: Push to GitHub**
+- [x] **Step 3: Push to GitHub**
 
 Create an empty repository on GitHub first (via the GitHub website — do not use `gh repo create` without confirming the repo name/visibility with the user first), then:
 
@@ -2643,18 +2643,18 @@ git remote add origin <URL_DO_REPOSITORIO_GITHUB>
 git push -u origin main
 ```
 
-- [ ] **Step 4: Deploy on Vercel**
+- [x] **Step 4: Deploy on Vercel**
 
 Go to https://vercel.com, sign in with GitHub, "Add New Project", select this
 repository, keep the default Next.js build settings, and click Deploy.
 
-- [ ] **Step 5: Verify the live deployment**
+- [x] **Step 5: Verify the live deployment**
 
 Open the `*.vercel.app` URL Vercel gives you, on both a desktop browser and a phone, and
 confirm the Dashboard, Classificação, Calendário, Resultados, Piloto, and Ao Vivo pages
 all load real data.
 
-- [ ] **Step 6: Commit the README**
+- [x] **Step 6: Commit the README**
 
 ```bash
 git add README.md
