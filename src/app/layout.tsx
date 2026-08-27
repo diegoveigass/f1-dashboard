@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Titillium_Web } from "next/font/google";
+import { Navigation } from "@/components/Navigation";
 import "./globals.css";
 
 const titillium = Titillium_Web({
@@ -22,7 +23,8 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={titillium.variable}>
       <body className="min-h-screen bg-background font-sans text-foreground">
-        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+        <Navigation />
+        <main className="mx-auto max-w-5xl px-4 pb-20 pt-6 md:pb-6">{children}</main>
       </body>
     </html>
   );
