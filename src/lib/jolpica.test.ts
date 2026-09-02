@@ -154,7 +154,7 @@ describe("getSeasonSchedule", () => {
   });
 });
 
-import { getRaceResults, getDriverInfo, getDriverSeasonResults } from "./jolpica";
+import { getRaceResults, getQualifyingResults, getDriverInfo, getDriverSeasonResults } from "./jolpica";
 
 describe("getRaceResults", () => {
   it("maps raw race results into RaceResult", async () => {
@@ -250,6 +250,92 @@ describe("getRaceResults", () => {
   it("throws when the round has no race data", async () => {
     mockFetchOnce({ MRData: { RaceTable: { season: "2026", round: "99", Races: [] } } });
     await expect(getRaceResults("2026", 99)).rejects.toThrow("No results found for 2026 round 99");
+  });
+});
+
+describe("getQualifyingResults", () => {
+  it("maps raw qualifying results into QualifyingResult, nulling out Q2/Q3 when absent", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          season: "2026",
+          round: "1",
+          Races: [
+            {
+              raceName: "Australian Grand Prix",
+              QualifyingResults: [
+                {
+                  position: "1",
+                  Driver: { driverId: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+                  Constructor: { constructorId: "mercedes", name: "Mercedes" },
+                  Q1: "1:19.507",
+                  Q2: "1:18.934",
+                  Q3: "1:18.518",
+                },
+                {
+                  position: "10",
+                  Driver: { driverId: "bortoleto", code: "BOR", givenName: "Gabriel", familyName: "Bortoleto" },
+                  Constructor: { constructorId: "audi", name: "Audi" },
+                  Q1: "1:20.495",
+                  Q2: "1:20.221",
+                  Q3: "", // Jolpica sends "" (not an omitted key) when no Q3 time was set
+                },
+                {
+                  position: "19",
+                  Driver: { driverId: "bottas", code: "BOT", givenName: "Valtteri", familyName: "Bottas" },
+                  Constructor: { constructorId: "sauber", name: "Sauber" },
+                  Q1: "1:23.244",
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getQualifyingResults("2026", 1);
+
+    expect(result).toEqual({
+      season: "2026",
+      round: 1,
+      raceName: "Australian Grand Prix",
+      results: [
+        {
+          position: 1,
+          driver: { id: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+          constructorId: "mercedes",
+          constructorName: "Mercedes",
+          q1: "1:19.507",
+          q2: "1:18.934",
+          q3: "1:18.518",
+        },
+        {
+          position: 10,
+          driver: { id: "bortoleto", code: "BOR", givenName: "Gabriel", familyName: "Bortoleto" },
+          constructorId: "audi",
+          constructorName: "Audi",
+          q1: "1:20.495",
+          q2: "1:20.221",
+          q3: null,
+        },
+        {
+          position: 19,
+          driver: { id: "bottas", code: "BOT", givenName: "Valtteri", familyName: "Bottas" },
+          constructorId: "sauber",
+          constructorName: "Sauber",
+          q1: "1:23.244",
+          q2: null,
+          q3: null,
+        },
+      ],
+    });
+  });
+
+  it("throws when the round has no qualifying data", async () => {
+    mockFetchOnce({ MRData: { RaceTable: { season: "2026", round: "99", Races: [] } } });
+    await expect(getQualifyingResults("2026", 99)).rejects.toThrow(
+      "No qualifying results found for 2026 round 99"
+    );
   });
 });
 

@@ -257,6 +257,74 @@ export async function getRaceResults(season: string, round: string | number): Pr
   };
 }
 
+export interface QualifyingResultEntry {
+  position: number;
+  driver: { id: string; code: string; givenName: string; familyName: string };
+  constructorId: string;
+  constructorName: string;
+  q1: string | null;
+  q2: string | null;
+  q3: string | null;
+}
+
+export interface QualifyingResult {
+  season: string;
+  round: number;
+  raceName: string;
+  results: QualifyingResultEntry[];
+}
+
+interface RawQualifyingResult {
+  position: string;
+  Driver: JolpicaDriver;
+  Constructor: JolpicaConstructor;
+  Q1?: string;
+  Q2?: string;
+  Q3?: string;
+}
+
+interface RawQualifyingResponse {
+  MRData: {
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<{ raceName: string; QualifyingResults: RawQualifyingResult[] }>;
+    };
+  };
+}
+
+export async function getQualifyingResults(
+  season: string,
+  round: string | number
+): Promise<QualifyingResult> {
+  const data = await fetchJolpica<RawQualifyingResponse>(`/${season}/${round}/qualifying.json`);
+  const race = data.MRData.RaceTable.Races[0];
+  if (!race) {
+    throw new Error(`No qualifying results found for ${season} round ${round}`);
+  }
+  return {
+    season: data.MRData.RaceTable.season,
+    round: Number(data.MRData.RaceTable.round),
+    raceName: race.raceName,
+    results: race.QualifyingResults.map((r) => ({
+      position: Number(r.position),
+      driver: {
+        id: r.Driver.driverId,
+        code: r.Driver.code,
+        givenName: r.Driver.givenName,
+        familyName: r.Driver.familyName,
+      },
+      constructorId: r.Constructor.constructorId,
+      constructorName: r.Constructor.name,
+      // `||`, not `??`: Jolpica sometimes sends an empty string (not an
+      // omitted key) for a session a driver didn't set a time in.
+      q1: r.Q1 || null,
+      q2: r.Q2 || null,
+      q3: r.Q3 || null,
+    })),
+  };
+}
+
 export interface DriverInfo {
   id: string;
   code: string;
