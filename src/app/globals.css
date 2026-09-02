@@ -15,6 +15,10 @@
 
   /* Broadcast-timing convention: purple marks the outright fastest lap. */
   --color-fastest: #b026ff;
+
+  /* Positions gained since the start read green; positions lost reuse the
+     brand red above (--color-accent) for the same "worse" read. */
+  --color-gained: #22c55e;
 }
 
 body {

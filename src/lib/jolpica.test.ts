@@ -172,6 +172,7 @@ describe("getRaceResults", () => {
                   position: "1",
                   points: "25",
                   status: "Finished",
+                  grid: "3",
                   Driver: { driverId: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
                   Constructor: { constructorId: "mercedes", name: "Mercedes" },
                   Time: { time: "1:23:06.801" },
@@ -201,9 +202,49 @@ describe("getRaceResults", () => {
           constructorName: "Mercedes",
           time: "1:23:06.801",
           fastestLapRank: 6,
+          grid: 3,
         },
       ],
     });
+  });
+
+  it("maps a pit lane start (grid 0) and a missing grid field", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          season: "2026",
+          round: "1",
+          Races: [
+            {
+              raceName: "Australian Grand Prix",
+              date: "2026-03-08",
+              Results: [
+                {
+                  position: "18",
+                  points: "0",
+                  status: "Finished",
+                  grid: "0",
+                  Driver: { driverId: "bottas", code: "BOT", givenName: "Valtteri", familyName: "Bottas" },
+                  Constructor: { constructorId: "sauber", name: "Sauber" },
+                },
+                {
+                  position: "19",
+                  points: "0",
+                  status: "Finished",
+                  Driver: { driverId: "zhou", code: "ZHO", givenName: "Guanyu", familyName: "Zhou" },
+                  Constructor: { constructorId: "sauber", name: "Sauber" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getRaceResults("2026", 1);
+
+    expect(result.results[0].grid).toBe(0);
+    expect(result.results[1].grid).toBeNull();
   });
 
   it("throws when the round has no race data", async () => {

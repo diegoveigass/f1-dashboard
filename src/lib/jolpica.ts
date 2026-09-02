@@ -194,6 +194,8 @@ export interface RaceResultEntry {
   constructorName: string;
   time: string | null;
   fastestLapRank: number | null;
+  /** Starting grid position. `0` means a pit lane start; `null` when Jolpica omits the field. */
+  grid: number | null;
 }
 
 export interface RaceResult {
@@ -208,6 +210,7 @@ interface RawResult {
   position: string;
   points: string;
   status: string;
+  grid?: string;
   Driver: JolpicaDriver;
   Constructor: JolpicaConstructor;
   Time?: { time: string };
@@ -249,6 +252,7 @@ export async function getRaceResults(season: string, round: string | number): Pr
       constructorName: r.Constructor.name,
       time: r.Time?.time ?? null,
       fastestLapRank: r.FastestLap ? Number(r.FastestLap.rank) : null,
+      grid: r.grid !== undefined ? Number(r.grid) : null,
     })),
   };
 }
