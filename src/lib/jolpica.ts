@@ -387,3 +387,63 @@ export async function getDriverSeasonResults(season: string, driverId: string): 
     };
   });
 }
+
+export interface ConstructorInfo {
+  id: string;
+  name: string;
+  nationality: string;
+}
+
+interface RawConstructorInfoResponse {
+  MRData: { ConstructorTable: { Constructors: JolpicaConstructor[] } };
+}
+
+export async function getConstructorInfo(constructorId: string): Promise<ConstructorInfo> {
+  const data = await fetchJolpica<RawConstructorInfoResponse>(`/constructors/${constructorId}.json`);
+  const constructor = data.MRData.ConstructorTable.Constructors[0];
+  if (!constructor) {
+    throw new Error(`Constructor not found: ${constructorId}`);
+  }
+  return {
+    id: constructor.constructorId,
+    name: constructor.name,
+    nationality: constructor.nationality,
+  };
+}
+
+export interface ConstructorRaceSummary {
+  round: number;
+  raceName: string;
+  // Unlike a driver's season results, a constructor fields two cars per race.
+  drivers: Array<{
+    driverId: string;
+    code: string;
+    givenName: string;
+    familyName: string;
+    position: number;
+    points: number;
+    status: string;
+  }>;
+}
+
+export async function getConstructorSeasonResults(
+  season: string,
+  constructorId: string
+): Promise<ConstructorRaceSummary[]> {
+  const data = await fetchJolpica<RawDriverResultsResponse>(
+    `/${season}/constructors/${constructorId}/results.json`
+  );
+  return data.MRData.RaceTable.Races.map((race) => ({
+    round: Number(race.round),
+    raceName: race.raceName,
+    drivers: race.Results.map((r) => ({
+      driverId: r.Driver.driverId,
+      code: r.Driver.code,
+      givenName: r.Driver.givenName,
+      familyName: r.Driver.familyName,
+      position: Number(r.position),
+      points: Number(r.points),
+      status: r.status,
+    })),
+  }));
+}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getRaceResults, getQualifyingResults } from "@/lib/jolpica";
 import { findRaceSessionKey, getSessionExtras } from "@/lib/openf1";
 import { getConstructorColor } from "@/lib/constructor-colors";
@@ -78,7 +79,11 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
                       </span>
                     )}
                   </td>
-                  <td className="px-3 py-2.5 text-muted">{entry.constructorName}</td>
+                  <td className="px-3 py-2.5 text-muted">
+                    <Link href={`/construtores/${entry.constructorId}`} className="hover:text-accent">
+                      {entry.constructorName}
+                    </Link>
+                  </td>
                   <td className="px-3 py-2.5 text-center tabular-nums text-muted">
                     {entry.grid === null ? "—" : entry.grid === 0 ? "PIT" : entry.grid}
                     {entry.grid === 1 && (
@@ -136,7 +141,11 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
                   <td className="px-3 py-2.5 font-semibold">
                     {entry.driver.givenName} {entry.driver.familyName}
                   </td>
-                  <td className="px-3 py-2.5 text-muted">{entry.constructorName}</td>
+                  <td className="px-3 py-2.5 text-muted">
+                    <Link href={`/construtores/${entry.constructorId}`} className="hover:text-accent">
+                      {entry.constructorName}
+                    </Link>
+                  </td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-muted">{entry.q1 ?? "—"}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-muted">{entry.q2 ?? "—"}</td>
                   <td className="px-3 py-2.5 text-right tabular-nums font-semibold">

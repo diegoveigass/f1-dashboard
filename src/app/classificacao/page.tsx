@@ -51,7 +51,14 @@ export default async function ClassificacaoPage() {
                     {standing.driver.givenName} {standing.driver.familyName}
                   </Link>
                 </td>
-                <td className="px-3 py-2.5 text-muted">{standing.constructorName}</td>
+                <td className="px-3 py-2.5 text-muted">
+                  <Link
+                    href={`/construtores/${standing.constructorId}`}
+                    className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                  >
+                    {standing.constructorName}
+                  </Link>
+                </td>
                 <td className="px-3 py-2.5 text-right tabular-nums">{standing.wins}</td>
                 <td className="px-3 py-2.5 text-right tabular-nums font-semibold">{standing.points}</td>
               </tr>
@@ -79,7 +86,14 @@ export default async function ClassificacaoPage() {
                 style={{ borderColor: getConstructorColor(standing.constructorId) }}
               >
                 <td className="px-3 py-2.5 tabular-nums text-muted">{standing.position}</td>
-                <td className="px-3 py-2.5 font-semibold">{standing.name}</td>
+                <td className="px-3 py-2.5 font-semibold">
+                  <Link
+                    href={`/construtores/${standing.constructorId}`}
+                    className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                  >
+                    {standing.name}
+                  </Link>
+                </td>
                 <td className="px-3 py-2.5 text-right tabular-nums">{standing.wins}</td>
                 <td className="px-3 py-2.5 text-right tabular-nums font-semibold">{standing.points}</td>
               </tr>

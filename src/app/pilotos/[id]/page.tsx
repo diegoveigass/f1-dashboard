@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getDriverInfo, getDriverStandings, getDriverSeasonResults } from "@/lib/jolpica";
 import { getConstructorColor } from "@/lib/constructor-colors";
 
@@ -44,7 +45,9 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
             className="mt-3 inline-flex items-center gap-2 border-l-4 bg-surface px-3 py-1.5 text-sm"
             style={{ borderColor: accent }}
           >
-            <span className="font-semibold">{currentStanding.constructorName}</span>
+            <Link href={`/construtores/${currentStanding.constructorId}`} className="font-semibold hover:text-accent">
+              {currentStanding.constructorName}
+            </Link>
             <span className="text-muted">·</span>
             <span className="tabular-nums">P{currentStanding.position}</span>
             <span className="text-muted">·</span>
@@ -74,7 +77,11 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
               >
                 <td className="px-3 py-2.5 tabular-nums text-muted">{race.round}</td>
                 <td className="px-3 py-2.5">{race.raceName}</td>
-                <td className="px-3 py-2.5 text-muted">{race.constructorName}</td>
+                <td className="px-3 py-2.5 text-muted">
+                  <Link href={`/construtores/${race.constructorId}`} className="hover:text-accent">
+                    {race.constructorName}
+                  </Link>
+                </td>
                 <td className="px-3 py-2.5 tabular-nums">{race.position}</td>
                 <td className="px-3 py-2.5 text-right tabular-nums font-semibold">{race.points}</td>
               </tr>

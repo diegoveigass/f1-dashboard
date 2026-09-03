@@ -154,7 +154,14 @@ describe("getSeasonSchedule", () => {
   });
 });
 
-import { getRaceResults, getQualifyingResults, getDriverInfo, getDriverSeasonResults } from "./jolpica";
+import {
+  getRaceResults,
+  getQualifyingResults,
+  getDriverInfo,
+  getDriverSeasonResults,
+  getConstructorInfo,
+  getConstructorSeasonResults,
+} from "./jolpica";
 
 describe("getRaceResults", () => {
   it("maps raw race results into RaceResult", async () => {
@@ -410,6 +417,89 @@ describe("getDriverSeasonResults", () => {
         status: "Finished",
         constructorId: "mclaren",
         constructorName: "McLaren",
+      },
+    ]);
+  });
+});
+
+describe("getConstructorInfo", () => {
+  it("maps raw constructor info into ConstructorInfo", async () => {
+    mockFetchOnce({
+      MRData: {
+        ConstructorTable: {
+          Constructors: [{ constructorId: "mercedes", name: "Mercedes", nationality: "German" }],
+        },
+      },
+    });
+
+    const result = await getConstructorInfo("mercedes");
+
+    expect(result).toEqual({ id: "mercedes", name: "Mercedes", nationality: "German" });
+  });
+
+  it("throws when the constructor id does not exist", async () => {
+    mockFetchOnce({ MRData: { ConstructorTable: { Constructors: [] } } });
+    await expect(getConstructorInfo("nobody")).rejects.toThrow("Constructor not found: nobody");
+  });
+});
+
+describe("getConstructorSeasonResults", () => {
+  it("maps one result per race into ConstructorRaceSummary[], one entry per driver", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          Races: [
+            {
+              round: "1",
+              raceName: "Australian Grand Prix",
+              Results: [
+                {
+                  position: "1",
+                  points: "25",
+                  status: "Finished",
+                  Driver: { driverId: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+                  Constructor: { constructorId: "mercedes", name: "Mercedes" },
+                },
+                {
+                  position: "2",
+                  points: "18",
+                  status: "Finished",
+                  Driver: { driverId: "antonelli", code: "ANT", givenName: "Andrea Kimi", familyName: "Antonelli" },
+                  Constructor: { constructorId: "mercedes", name: "Mercedes" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getConstructorSeasonResults("2026", "mercedes");
+
+    expect(result).toEqual([
+      {
+        round: 1,
+        raceName: "Australian Grand Prix",
+        drivers: [
+          {
+            driverId: "russell",
+            code: "RUS",
+            givenName: "George",
+            familyName: "Russell",
+            position: 1,
+            points: 25,
+            status: "Finished",
+          },
+          {
+            driverId: "antonelli",
+            code: "ANT",
+            givenName: "Andrea Kimi",
+            familyName: "Antonelli",
+            position: 2,
+            points: 18,
+            status: "Finished",
+          },
+        ],
       },
     ]);
   });
