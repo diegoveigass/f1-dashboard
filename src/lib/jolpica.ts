@@ -478,3 +478,51 @@ export async function getConstructorSeasonResults(
     })),
   }));
 }
+
+export interface PitStopEntry {
+  driverId: string;
+  lap: number;
+  stop: number;
+  durationSeconds: number;
+}
+
+interface RawPitStop {
+  driverId: string;
+  lap: string;
+  stop: string;
+  duration: string;
+}
+
+interface RawPitStopsResponse {
+  MRData: {
+    RaceTable: {
+      Races: Array<{ PitStops: RawPitStop[] }>;
+    };
+  };
+}
+
+// Usually "27.733" (seconds); a stop spanning a red flag comes back as
+// "16:12.356" (minutes:seconds) instead.
+function parsePitDuration(duration: string): number {
+  const [minutes, seconds] = duration.includes(":") ? duration.split(":") : ["0", duration];
+  return Number(minutes) * 60 + Number(seconds);
+}
+
+/**
+ * Jolpica's own pit stop data — unlike the OpenF1 enrichment this page also
+ * uses, it covers every season back to 2012, not just from 2023. Returns an
+ * empty array (not an error) when the round genuinely has none.
+ */
+export async function getPitStops(season: string, round: string | number): Promise<PitStopEntry[]> {
+  // Jolpica defaults to 30 results per page; a race can have more pit stops
+  // than that (double-stacked stops, a chaotic wet race), so ask for the max.
+  const data = await fetchJolpica<RawPitStopsResponse>(`/${season}/${round}/pitstops.json?limit=100`);
+  const race = data.MRData.RaceTable.Races[0];
+  if (!race) return [];
+  return race.PitStops.map((p) => ({
+    driverId: p.driverId,
+    lap: Number(p.lap),
+    stop: Number(p.stop),
+    durationSeconds: parsePitDuration(p.duration),
+  }));
+}

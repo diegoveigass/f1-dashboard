@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getRaceResults, getSprintResults, getQualifyingResults } from "@/lib/jolpica";
+import { getRaceResults, getSprintResults, getQualifyingResults, getPitStops } from "@/lib/jolpica";
 import { findRaceSessionKey, getSessionExtras } from "@/lib/openf1";
 import { getConstructorColor } from "@/lib/constructor-colors";
 import { RaceResultTable } from "@/components/RaceResultTable";
@@ -40,6 +40,19 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
   } catch {
     qualifying = null;
   }
+
+  // Jolpica's own pit stop data covers every season back to 2012 (vs. OpenF1's
+  // 2023+) and identifies drivers by id instead of just a car number, so it's
+  // preferred; OpenF1's list is only a fallback for the rare gap.
+  let pitStops: Awaited<ReturnType<typeof getPitStops>> = [];
+  try {
+    pitStops = await getPitStops(result.season, result.round);
+  } catch {
+    pitStops = [];
+  }
+  const driverNameById = new Map(
+    result.results.map((entry) => [entry.driver.id, `${entry.driver.givenName} ${entry.driver.familyName}`])
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -106,17 +119,32 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
         </section>
       )}
 
-      {extras && extras.pitStops.length > 0 && (
+      {pitStops.length > 0 ? (
         <section className="border-l-4 border-line bg-surface p-4 text-sm">
           <h2 className="section-label mb-2">Pit stops</h2>
           <ul className="flex flex-col gap-1 text-muted">
-            {extras.pitStops.map((stop, index) => (
+            {pitStops.map((stop, index) => (
               <li key={index} className="tabular-nums">
-                Carro #{stop.driverNumber} — volta {stop.lapNumber} — {stop.pitDurationSeconds.toFixed(1)}s
+                {driverNameById.get(stop.driverId) ?? stop.driverId} — volta {stop.lap} — parada {stop.stop} —{" "}
+                {stop.durationSeconds.toFixed(1)}s
               </li>
             ))}
           </ul>
         </section>
+      ) : (
+        extras &&
+        extras.pitStops.length > 0 && (
+          <section className="border-l-4 border-line bg-surface p-4 text-sm">
+            <h2 className="section-label mb-2">Pit stops</h2>
+            <ul className="flex flex-col gap-1 text-muted">
+              {extras.pitStops.map((stop, index) => (
+                <li key={index} className="tabular-nums">
+                  Carro #{stop.driverNumber} — volta {stop.lapNumber} — {stop.pitDurationSeconds.toFixed(1)}s
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
       )}
     </div>
   );

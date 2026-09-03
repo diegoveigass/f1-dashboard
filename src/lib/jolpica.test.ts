@@ -162,6 +162,7 @@ import {
   getDriverSeasonResults,
   getConstructorInfo,
   getConstructorSeasonResults,
+  getPitStops,
 } from "./jolpica";
 
 describe("getRaceResults", () => {
@@ -561,5 +562,57 @@ describe("getConstructorSeasonResults", () => {
         ],
       },
     ]);
+  });
+});
+
+describe("getPitStops", () => {
+  it("maps raw pit stops into PitStopEntry[], parsing plain-seconds durations", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          Races: [
+            {
+              PitStops: [
+                { driverId: "colapinto", lap: "9", stop: "1", time: "15:16:40", duration: "27.733" },
+                { driverId: "norris", lap: "11", stop: "1", time: "15:19:21", duration: "18.266" },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getPitStops("2026", 1);
+
+    expect(result).toEqual([
+      { driverId: "colapinto", lap: 9, stop: 1, durationSeconds: 27.733 },
+      { driverId: "norris", lap: 11, stop: 1, durationSeconds: 18.266 },
+    ]);
+  });
+
+  it("parses a red-flag-length duration given as minutes:seconds", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          Races: [
+            {
+              PitStops: [
+                { driverId: "alonso", lap: "13", stop: "2", time: "15:23:55", duration: "16:12.356" },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getPitStops("2026", 1);
+
+    expect(result[0].durationSeconds).toBeCloseTo(16 * 60 + 12.356);
+  });
+
+  it("returns an empty array, not an error, when the round has no pit stop data", async () => {
+    mockFetchOnce({ MRData: { RaceTable: { Races: [] } } });
+    const result = await getPitStops("2026", 99);
+    expect(result).toEqual([]);
   });
 });
