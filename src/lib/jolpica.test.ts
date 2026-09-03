@@ -156,6 +156,7 @@ describe("getSeasonSchedule", () => {
 
 import {
   getRaceResults,
+  getSprintResults,
   getQualifyingResults,
   getDriverInfo,
   getDriverSeasonResults,
@@ -257,6 +258,64 @@ describe("getRaceResults", () => {
   it("throws when the round has no race data", async () => {
     mockFetchOnce({ MRData: { RaceTable: { season: "2026", round: "99", Races: [] } } });
     await expect(getRaceResults("2026", 99)).rejects.toThrow("No results found for 2026 round 99");
+  });
+});
+
+describe("getSprintResults", () => {
+  it("maps raw sprint results into RaceResult, same shape as getRaceResults", async () => {
+    mockFetchOnce({
+      MRData: {
+        RaceTable: {
+          season: "2026",
+          round: "2",
+          Races: [
+            {
+              raceName: "Chinese Grand Prix",
+              date: "2026-03-15",
+              SprintResults: [
+                {
+                  position: "1",
+                  points: "8",
+                  status: "Finished",
+                  grid: "1",
+                  Driver: { driverId: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+                  Constructor: { constructorId: "mercedes", name: "Mercedes" },
+                  Time: { time: "33:38.998" },
+                  FastestLap: { rank: "4" },
+                },
+              ],
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getSprintResults("2026", 2);
+
+    expect(result).toEqual({
+      season: "2026",
+      round: 2,
+      raceName: "Chinese Grand Prix",
+      date: "2026-03-15",
+      results: [
+        {
+          position: 1,
+          status: "Finished",
+          points: 8,
+          driver: { id: "russell", code: "RUS", givenName: "George", familyName: "Russell" },
+          constructorId: "mercedes",
+          constructorName: "Mercedes",
+          time: "33:38.998",
+          fastestLapRank: 4,
+          grid: 1,
+        },
+      ],
+    });
+  });
+
+  it("throws when the round has no sprint data", async () => {
+    mockFetchOnce({ MRData: { RaceTable: { season: "2026", round: "1", Races: [] } } });
+    await expect(getSprintResults("2026", 1)).rejects.toThrow("No sprint results found for 2026 round 1");
   });
 });
 

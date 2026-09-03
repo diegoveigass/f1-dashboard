@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getRaceResults, getQualifyingResults } from "@/lib/jolpica";
+import { getRaceResults, getSprintResults, getQualifyingResults } from "@/lib/jolpica";
 import { findRaceSessionKey, getSessionExtras } from "@/lib/openf1";
 import { getConstructorColor } from "@/lib/constructor-colors";
+import { RaceResultTable } from "@/components/RaceResultTable";
 
 export default async function ResultadosPage({ params }: { params: Promise<{ round: string }> }) {
   const { round } = await params;
@@ -23,8 +24,16 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
   const sessionKey = await findRaceSessionKey(result.season, result.date);
   const extras = sessionKey ? await getSessionExtras(sessionKey) : null;
 
-  // Qualifying is a separate Jolpica endpoint from the race result — best-effort,
-  // same as the OpenF1 extras: an old/incomplete round just omits the section.
+  // Sprint and qualifying are separate Jolpica endpoints from the race result —
+  // best-effort, same as the OpenF1 extras: most rounds have no sprint, and an
+  // old/incomplete round just omits qualifying too, instead of failing the page.
+  let sprint: Awaited<ReturnType<typeof getSprintResults>> | null = null;
+  try {
+    sprint = await getSprintResults(result.season, result.round);
+  } catch {
+    sprint = null;
+  }
+
   let qualifying: Awaited<ReturnType<typeof getQualifyingResults>> | null = null;
   try {
     qualifying = await getQualifyingResults(result.season, result.round);
@@ -39,82 +48,11 @@ export default async function ResultadosPage({ params }: { params: Promise<{ rou
         <h1 className="text-3xl font-bold uppercase tracking-tight text-foreground">{result.raceName}</h1>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <h2 className="section-label">Resultado da corrida</h2>
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-line text-left">
-              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Pos.</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Piloto</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Equipe</th>
-              <th className="px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-muted">Grid</th>
-              <th className="px-3 py-2 text-center text-xs font-bold uppercase tracking-wider text-muted">+/-</th>
-              <th className="px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted">Status</th>
-              <th className="px-3 py-2 text-right text-xs font-bold uppercase tracking-wider text-muted">Pontos</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.results.map((entry) => {
-              // grid 0 means a pit lane start (no real grid slot); null means
-              // Jolpica omitted the field entirely — neither has a meaningful delta.
-              const positionChange =
-                entry.grid !== null && entry.grid > 0 ? entry.grid - entry.position : null;
+      <RaceResultTable title="Resultado da corrida" results={result.results} />
 
-              return (
-                <tr
-                  key={entry.driver.id}
-                  className="border-l-4 bg-surface transition-colors hover:bg-surface-raised"
-                  style={{ borderColor: getConstructorColor(entry.constructorId) }}
-                >
-                  <td className="px-3 py-2.5 tabular-nums text-muted">{entry.position}</td>
-                  <td className="px-3 py-2.5 font-semibold">
-                    {entry.driver.givenName} {entry.driver.familyName}
-                    {entry.fastestLapRank === 1 && (
-                      <span
-                        className="ml-2 rounded px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-foreground"
-                        style={{ backgroundColor: "var(--color-fastest)" }}
-                        title="Volta mais rápida da corrida"
-                      >
-                        VR
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-muted">
-                    <Link href={`/construtores/${entry.constructorId}`} className="hover:text-accent">
-                      {entry.constructorName}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2.5 text-center tabular-nums text-muted">
-                    {entry.grid === null ? "—" : entry.grid === 0 ? "PIT" : entry.grid}
-                    {entry.grid === 1 && (
-                      <span
-                        className="ml-1.5 rounded px-1.5 py-0.5 text-[0.65rem] font-bold uppercase tracking-wider text-foreground"
-                        style={{ backgroundColor: "var(--color-accent)" }}
-                        title="Pole position"
-                      >
-                        Pole
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-center tabular-nums font-semibold">
-                    {positionChange === null ? (
-                      <span className="text-muted">—</span>
-                    ) : positionChange > 0 ? (
-                      <span style={{ color: "var(--color-gained)" }}>+{positionChange}</span>
-                    ) : positionChange < 0 ? (
-                      <span className="text-accent">{positionChange}</span>
-                    ) : (
-                      <span className="text-muted">0</span>
-                    )}
-                  </td>
-                  <td className="px-3 py-2.5 text-muted">{entry.status}</td>
-                  <td className="px-3 py-2.5 text-right tabular-nums font-semibold">{entry.points}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {sprint && sprint.results.length > 0 && (
+        <RaceResultTable title="Resultado do Sprint" results={sprint.results} />
+      )}
 
       {qualifying && qualifying.results.length > 0 && (
         <div className="flex flex-col gap-3">

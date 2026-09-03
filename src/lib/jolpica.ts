@@ -227,6 +227,27 @@ interface RawResultsResponse {
   };
 }
 
+// Shared by getRaceResults and getSprintResults — Jolpica's race and sprint
+// result entries are the same shape, just nested under different keys.
+function mapResultEntries(results: RawResult[]): RaceResultEntry[] {
+  return results.map((r) => ({
+    position: Number(r.position),
+    status: r.status,
+    points: Number(r.points),
+    driver: {
+      id: r.Driver.driverId,
+      code: r.Driver.code,
+      givenName: r.Driver.givenName,
+      familyName: r.Driver.familyName,
+    },
+    constructorId: r.Constructor.constructorId,
+    constructorName: r.Constructor.name,
+    time: r.Time?.time ?? null,
+    fastestLapRank: r.FastestLap ? Number(r.FastestLap.rank) : null,
+    grid: r.grid !== undefined ? Number(r.grid) : null,
+  }));
+}
+
 export async function getRaceResults(season: string, round: string | number): Promise<RaceResult> {
   const data = await fetchJolpica<RawResultsResponse>(`/${season}/${round}/results.json`);
   const race = data.MRData.RaceTable.Races[0];
@@ -238,22 +259,32 @@ export async function getRaceResults(season: string, round: string | number): Pr
     round: Number(data.MRData.RaceTable.round),
     raceName: race.raceName,
     date: race.date,
-    results: race.Results.map((r) => ({
-      position: Number(r.position),
-      status: r.status,
-      points: Number(r.points),
-      driver: {
-        id: r.Driver.driverId,
-        code: r.Driver.code,
-        givenName: r.Driver.givenName,
-        familyName: r.Driver.familyName,
-      },
-      constructorId: r.Constructor.constructorId,
-      constructorName: r.Constructor.name,
-      time: r.Time?.time ?? null,
-      fastestLapRank: r.FastestLap ? Number(r.FastestLap.rank) : null,
-      grid: r.grid !== undefined ? Number(r.grid) : null,
-    })),
+    results: mapResultEntries(race.Results),
+  };
+}
+
+interface RawSprintResponse {
+  MRData: {
+    RaceTable: {
+      season: string;
+      round: string;
+      Races: Array<{ raceName: string; date: string; SprintResults: RawResult[] }>;
+    };
+  };
+}
+
+export async function getSprintResults(season: string, round: string | number): Promise<RaceResult> {
+  const data = await fetchJolpica<RawSprintResponse>(`/${season}/${round}/sprint.json`);
+  const race = data.MRData.RaceTable.Races[0];
+  if (!race) {
+    throw new Error(`No sprint results found for ${season} round ${round}`);
+  }
+  return {
+    season: data.MRData.RaceTable.season,
+    round: Number(data.MRData.RaceTable.round),
+    raceName: race.raceName,
+    date: race.date,
+    results: mapResultEntries(race.SprintResults),
   };
 }
 
