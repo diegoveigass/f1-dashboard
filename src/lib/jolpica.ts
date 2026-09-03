@@ -118,6 +118,7 @@ export interface RaceScheduleEntry {
   season: string;
   round: number;
   raceName: string;
+  circuitId: string;
   circuitName: string;
   locality: string;
   country: string;
@@ -142,6 +143,7 @@ interface RawRace {
   round: string;
   raceName: string;
   Circuit: {
+    circuitId: string;
     circuitName: string;
     Location: { locality: string; country: string };
   };
@@ -170,6 +172,7 @@ export async function getSeasonSchedule(season: string = "current"): Promise<Rac
     season: race.season,
     round: Number(race.round),
     raceName: race.raceName,
+    circuitId: race.Circuit.circuitId,
     circuitName: race.Circuit.circuitName,
     locality: race.Circuit.Location.locality,
     country: race.Circuit.Location.country,
@@ -525,4 +528,53 @@ export async function getPitStops(season: string, round: string | number): Promi
     stop: Number(p.stop),
     durationSeconds: parsePitDuration(p.duration),
   }));
+}
+
+export interface CircuitInfo {
+  id: string;
+  name: string;
+  locality: string;
+  country: string;
+  lat: number;
+  long: number;
+  wikipediaUrl: string;
+}
+
+interface RawCircuit {
+  circuitId: string;
+  url: string;
+  circuitName: string;
+  Location: { lat: string; long: string; locality: string; country: string };
+}
+
+interface RawCircuitsResponse {
+  MRData: { CircuitTable: { Circuits: RawCircuit[] } };
+}
+
+function mapCircuit(c: RawCircuit): CircuitInfo {
+  return {
+    id: c.circuitId,
+    name: c.circuitName,
+    locality: c.Location.locality,
+    country: c.Location.country,
+    lat: Number(c.Location.lat),
+    long: Number(c.Location.long),
+    wikipediaUrl: c.url,
+  };
+}
+
+export async function getCircuits(season: string = "current"): Promise<CircuitInfo[]> {
+  // A season has ~24 circuits, past the default 30-per-page limit's margin —
+  // same reasoning as getPitStops, ask for the max up front.
+  const data = await fetchJolpica<RawCircuitsResponse>(`/${season}/circuits.json?limit=100`);
+  return data.MRData.CircuitTable.Circuits.map(mapCircuit);
+}
+
+export async function getCircuitInfo(circuitId: string): Promise<CircuitInfo> {
+  const data = await fetchJolpica<RawCircuitsResponse>(`/circuits/${circuitId}.json`);
+  const circuit = data.MRData.CircuitTable.Circuits[0];
+  if (!circuit) {
+    throw new Error(`Circuit not found: ${circuitId}`);
+  }
+  return mapCircuit(circuit);
 }

@@ -4,6 +4,7 @@ const LINKS = [
   { href: "/", label: "Início" },
   { href: "/classificacao", label: "Classificação" },
   { href: "/calendario", label: "Calendário" },
+  { href: "/circuitos", label: "Circuitos" },
   { href: "/ao-vivo", label: "Ao Vivo" },
 ];
 

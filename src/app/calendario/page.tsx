@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { io } from "next/cache";
 import { getSeasonSchedule } from "@/lib/jolpica";
 
 function formatDate(iso: string): string {
@@ -19,6 +20,14 @@ export default async function CalendarioPage() {
     return <p className="text-muted">Não foi possível carregar o calendário agora.</p>;
   }
 
+  // Marks `Date.now()` below as an intentional per-request read, not a value to
+  // freeze into a static shell if Cache Components is ever enabled here — see
+  // node_modules/next/dist/docs/.../io.md. The react-hooks/purity rule doesn't
+  // know about this Next-specific escape hatch, so it still needs silencing:
+  // this Server Component renders once per request (no re-render to be unstable
+  // across), only to fade out races already in the past.
+  await io();
+  // eslint-disable-next-line react-hooks/purity
   const nowMs = Date.now();
 
   return (
@@ -42,7 +51,10 @@ export default async function CalendarioPage() {
                 {race.raceName}
               </Link>
               <p className="text-sm text-muted">
-                {race.locality}, {race.country}
+                <Link href={`/circuitos/${race.circuitId}`} className="hover:text-accent">
+                  {race.circuitName}
+                </Link>{" "}
+                — {race.locality}, {race.country}
               </p>
               <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
                 {race.sessions.fp1 && (

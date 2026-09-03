@@ -115,6 +115,7 @@ describe("getSeasonSchedule", () => {
               round: "2",
               raceName: "Chinese Grand Prix",
               Circuit: {
+                circuitId: "shanghai",
                 circuitName: "Shanghai International Circuit",
                 Location: { locality: "Shanghai", country: "China" },
               },
@@ -137,6 +138,7 @@ describe("getSeasonSchedule", () => {
         season: "2026",
         round: 2,
         raceName: "Chinese Grand Prix",
+        circuitId: "shanghai",
         circuitName: "Shanghai International Circuit",
         locality: "Shanghai",
         country: "China",
@@ -163,6 +165,8 @@ import {
   getConstructorInfo,
   getConstructorSeasonResults,
   getPitStops,
+  getCircuits,
+  getCircuitInfo,
 } from "./jolpica";
 
 describe("getRaceResults", () => {
@@ -614,5 +618,74 @@ describe("getPitStops", () => {
     mockFetchOnce({ MRData: { RaceTable: { Races: [] } } });
     const result = await getPitStops("2026", 99);
     expect(result).toEqual([]);
+  });
+});
+
+describe("getCircuits", () => {
+  it("maps raw circuits into CircuitInfo[]", async () => {
+    mockFetchOnce({
+      MRData: {
+        CircuitTable: {
+          Circuits: [
+            {
+              circuitId: "monza",
+              url: "https://en.wikipedia.org/wiki/Monza_Circuit",
+              circuitName: "Autodromo Nazionale di Monza",
+              Location: { lat: "45.6156", long: "9.28111", locality: "Monza", country: "Italy" },
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getCircuits("2026");
+
+    expect(result).toEqual([
+      {
+        id: "monza",
+        name: "Autodromo Nazionale di Monza",
+        locality: "Monza",
+        country: "Italy",
+        lat: 45.6156,
+        long: 9.28111,
+        wikipediaUrl: "https://en.wikipedia.org/wiki/Monza_Circuit",
+      },
+    ]);
+  });
+});
+
+describe("getCircuitInfo", () => {
+  it("maps a single raw circuit into CircuitInfo", async () => {
+    mockFetchOnce({
+      MRData: {
+        CircuitTable: {
+          Circuits: [
+            {
+              circuitId: "monaco",
+              url: "https://en.wikipedia.org/wiki/Circuit_de_Monaco",
+              circuitName: "Circuit de Monaco",
+              Location: { lat: "43.7347", long: "7.42056", locality: "Monte Carlo", country: "Monaco" },
+            },
+          ],
+        },
+      },
+    });
+
+    const result = await getCircuitInfo("monaco");
+
+    expect(result).toEqual({
+      id: "monaco",
+      name: "Circuit de Monaco",
+      locality: "Monte Carlo",
+      country: "Monaco",
+      lat: 43.7347,
+      long: 7.42056,
+      wikipediaUrl: "https://en.wikipedia.org/wiki/Circuit_de_Monaco",
+    });
+  });
+
+  it("throws when the circuit id does not exist", async () => {
+    mockFetchOnce({ MRData: { CircuitTable: { Circuits: [] } } });
+    await expect(getCircuitInfo("nobody")).rejects.toThrow("Circuit not found: nobody");
   });
 });
