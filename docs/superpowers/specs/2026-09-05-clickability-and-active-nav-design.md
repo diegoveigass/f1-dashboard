@@ -71,6 +71,7 @@ Regra:
 | [`calendario/page.tsx`](../../../src/app/calendario/page.tsx) | `<li>` com 2 destinos (corrida → `/resultados/[round]`, circuito → `/circuitos/[id]`) | sublinhado permanente nos 2 links |
 | [`classificacao/page.tsx`](../../../src/app/classificacao/page.tsx) | `<tr>` com 2 destinos na tabela de pilotos (piloto → `/pilotos/[id]`, equipe → `/construtores/[id]`); `<tr>` com 1 destino na tabela de construtores | sublinhado nos 2 links da tabela de pilotos; `<tr>` de construtores também vira candidato a link único, mas mantém sublinhado por consistência com a tabela de pilotos ao lado (mesma varredura visual) |
 | [`RaceResultTable.tsx`](../../../src/components/RaceResultTable.tsx) | `<tr>` com 1 destino (equipe → `/construtores/[id]`; nome do piloto não é link) | sublinhado no link de equipe |
+| [`resultados/[round]/page.tsx`](../../../src/app/resultados/[round]/page.tsx) | tabela de Qualifying, mesmo padrão do `RaceResultTable` mas inline nesta página | sublinhado no link de equipe |
 | [`pilotos/[id]/page.tsx`](../../../src/app/pilotos/[id]/page.tsx) | `<tr>` com 1 destino (equipe) | sublinhado no link de equipe |
 | [`construtores/[id]/page.tsx`](../../../src/app/construtores/[id]/page.tsx) | `<tr>` com 1 destino (piloto) | sublinhado no link de piloto |
 

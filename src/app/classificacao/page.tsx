@@ -46,7 +46,7 @@ export default async function ClassificacaoPage() {
                 <td className="px-3 py-2.5">
                   <Link
                     href={`/pilotos/${standing.driver.id}`}
-                    className="font-semibold hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                    className="link-underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                   >
                     {standing.driver.givenName} {standing.driver.familyName}
                   </Link>
@@ -54,7 +54,7 @@ export default async function ClassificacaoPage() {
                 <td className="px-3 py-2.5 text-muted">
                   <Link
                     href={`/construtores/${standing.constructorId}`}
-                    className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                    className="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                   >
                     {standing.constructorName}
                   </Link>
@@ -89,7 +89,7 @@ export default async function ClassificacaoPage() {
                 <td className="px-3 py-2.5 font-semibold">
                   <Link
                     href={`/construtores/${standing.constructorId}`}
-                    className="hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                    className="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                   >
                     {standing.name}
                   </Link>

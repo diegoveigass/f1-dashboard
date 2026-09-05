@@ -44,6 +44,24 @@ body {
     text-transform: uppercase;
     color: var(--color-muted);
   }
+
+  /* Underlined link used inside a table row/card that has more than one
+     navigation target (e.g. driver + team in the same row) — the row itself
+     can't become a single <Link> there, so the underline (not just a color
+     change on hover) is what tells the reader this exact text is clickable,
+     even at rest. Pairs with an unrelated hover:bg on the row, which stays
+     purely a reading aid, not a click affordance, once this exists. */
+  .link-underline {
+    text-decoration-line: underline;
+    text-decoration-color: color-mix(in oklab, var(--color-muted) 50%, transparent);
+    text-underline-offset: 2px;
+    transition: color 150ms, text-decoration-color 150ms;
+  }
+  .link-underline:hover,
+  .link-underline:focus-visible {
+    color: var(--color-accent);
+    text-decoration-color: var(--color-accent);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

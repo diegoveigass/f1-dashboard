@@ -49,7 +49,10 @@ export function RaceResultTable({ title, results }: { title: string; results: Ra
                   )}
                 </td>
                 <td className="px-3 py-2.5 text-muted">
-                  <Link href={`/construtores/${entry.constructorId}`} className="hover:text-accent">
+                  <Link
+                    href={`/construtores/${entry.constructorId}`}
+                    className="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                  >
                     {entry.constructorName}
                   </Link>
                 </td>

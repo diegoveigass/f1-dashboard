@@ -46,12 +46,15 @@ export default async function CalendarioPage() {
               <p className="section-label mb-1">Round {String(race.round).padStart(2, "0")}</p>
               <Link
                 href={`/resultados/${race.round}`}
-                className="text-lg font-bold hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                className="link-underline text-lg font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
               >
                 {race.raceName}
               </Link>
               <p className="text-sm text-muted">
-                <Link href={`/circuitos/${race.circuitId}`} className="hover:text-accent">
+                <Link
+                  href={`/circuitos/${race.circuitId}`}
+                  className="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                >
                   {race.circuitName}
                 </Link>{" "}
                 — {race.locality}, {race.country}

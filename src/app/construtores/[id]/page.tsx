@@ -73,7 +73,7 @@ export default async function ConstrutorPage({ params }: { params: Promise<{ id:
                   <td className="px-3 py-2.5">
                     <Link
                       href={`/pilotos/${driver.driverId}`}
-                      className="font-semibold hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                      className="link-underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
                     >
                       {driver.givenName} {driver.familyName}
                     </Link>

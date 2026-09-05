@@ -45,7 +45,10 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
             className="mt-3 inline-flex items-center gap-2 border-l-4 bg-surface px-3 py-1.5 text-sm"
             style={{ borderColor: accent }}
           >
-            <Link href={`/construtores/${currentStanding.constructorId}`} className="font-semibold hover:text-accent">
+            <Link
+              href={`/construtores/${currentStanding.constructorId}`}
+              className="link-underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+            >
               {currentStanding.constructorName}
             </Link>
             <span className="text-muted">·</span>
@@ -78,7 +81,10 @@ export default async function PilotoPage({ params }: { params: Promise<{ id: str
                 <td className="px-3 py-2.5 tabular-nums text-muted">{race.round}</td>
                 <td className="px-3 py-2.5">{race.raceName}</td>
                 <td className="px-3 py-2.5 text-muted">
-                  <Link href={`/construtores/${race.constructorId}`} className="hover:text-accent">
+                  <Link
+                    href={`/construtores/${race.constructorId}`}
+                    className="link-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                  >
                     {race.constructorName}
                   </Link>
                 </td>
