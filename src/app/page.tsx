@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getDriverStandings, getConstructorStandings, getSeasonSchedule, type RaceScheduleEntry } from "@/lib/jolpica";
 import { getConstructorColor } from "@/lib/constructor-colors";
 
@@ -56,18 +57,20 @@ export default async function DashboardPage() {
         <h2 className="section-label mb-3">Top 5 — Pilotos</h2>
         <ol className="flex flex-col gap-1">
           {drivers.slice(0, 5).map((standing) => (
-            <li
-              key={standing.driver.id}
-              className="flex items-center justify-between gap-3 border-l-4 bg-surface px-3 py-2.5 transition-colors hover:bg-surface-raised"
-              style={{ borderColor: getConstructorColor(standing.constructorId) }}
-            >
-              <span className="flex items-baseline gap-3">
-                <span className="tabular-nums text-muted">{standing.position}</span>
-                <span className="font-semibold">
-                  {standing.driver.givenName} {standing.driver.familyName}
+            <li key={standing.driver.id}>
+              <Link
+                href={`/pilotos/${standing.driver.id}`}
+                className="group flex items-center justify-between gap-3 border-l-4 bg-surface px-3 py-2.5 transition-colors hover:bg-surface-raised focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                style={{ borderColor: getConstructorColor(standing.constructorId) }}
+              >
+                <span className="flex items-baseline gap-3">
+                  <span className="tabular-nums text-muted">{standing.position}</span>
+                  <span className="font-semibold transition-colors group-hover:text-accent">
+                    {standing.driver.givenName} {standing.driver.familyName}
+                  </span>
                 </span>
-              </span>
-              <span className="tabular-nums font-semibold">{standing.points} pts</span>
+                <span className="tabular-nums font-semibold">{standing.points} pts</span>
+              </Link>
             </li>
           ))}
         </ol>
@@ -77,16 +80,18 @@ export default async function DashboardPage() {
         <h2 className="section-label mb-3">Top 5 — Construtores</h2>
         <ol className="flex flex-col gap-1">
           {constructors.slice(0, 5).map((standing) => (
-            <li
-              key={standing.constructorId}
-              className="flex items-center justify-between gap-3 border-l-4 bg-surface px-3 py-2.5 transition-colors hover:bg-surface-raised"
-              style={{ borderColor: getConstructorColor(standing.constructorId) }}
-            >
-              <span className="flex items-baseline gap-3">
-                <span className="tabular-nums text-muted">{standing.position}</span>
-                <span className="font-semibold">{standing.name}</span>
-              </span>
-              <span className="tabular-nums font-semibold">{standing.points} pts</span>
+            <li key={standing.constructorId}>
+              <Link
+                href={`/construtores/${standing.constructorId}`}
+                className="group flex items-center justify-between gap-3 border-l-4 bg-surface px-3 py-2.5 transition-colors hover:bg-surface-raised focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                style={{ borderColor: getConstructorColor(standing.constructorId) }}
+              >
+                <span className="flex items-baseline gap-3">
+                  <span className="tabular-nums text-muted">{standing.position}</span>
+                  <span className="font-semibold transition-colors group-hover:text-accent">{standing.name}</span>
+                </span>
+                <span className="tabular-nums font-semibold">{standing.points} pts</span>
+              </Link>
             </li>
           ))}
         </ol>
