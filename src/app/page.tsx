@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getDriverStandings, getConstructorStandings, getSeasonSchedule, type RaceScheduleEntry } from "@/lib/jolpica";
 import { getConstructorColor } from "@/lib/constructor-colors";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 function findNextRace(schedule: RaceScheduleEntry[]): RaceScheduleEntry | null {
   const nowMs = Date.now();
@@ -45,7 +46,7 @@ export default async function DashboardPage() {
           <p className="mt-2 text-muted">
             Próxima corrida: <strong className="text-foreground">{nextRace.raceName}</strong> em{" "}
             <span className="tabular-nums">
-              {new Date(nextRace.sessions.race).toLocaleString("pt-BR", { dateStyle: "long", timeStyle: "short" })}
+              <LocalDateTime iso={nextRace.sessions.race} withZone />
             </span>
           </p>
         ) : (
